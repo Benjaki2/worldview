@@ -279,9 +279,6 @@ export default (function (self) {
       case 'minute':
         newDate.setUTCDate(newDate.getUTCDate() + amount);
         break;
-      case 'hour':
-        newDate.setUTCDate(newDate.getUTCDate() + amount);
-        break;
       case 'day':
         newDate.setUTCDate(newDate.getUTCDate() + amount);
         break;
