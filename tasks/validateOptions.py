@@ -144,7 +144,7 @@ for layer_id in wv["layers"].keys():
         start_date = min(start_date, d)
 
 if start_date != datetime.max:
-    wv["startDate"] = start_date.strftime("%Y-%m-%d")
+    wv["startDate"] = start_date.strftime("%Y-%m-%d %H:%M:%S")
 
 
 for layer_id in wv["layerOrder"]:

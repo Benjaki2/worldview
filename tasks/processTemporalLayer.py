@@ -57,11 +57,9 @@ def process_temporal(wv_layer, value):
                     endTimeParse = datetime.strptime(endTime, "%Y-%m-%d %H:%M:%S")
                     date_range_end.append(endTimeParse.strftime("%Y-%m-%d %H:%M:%S"))
 
-            # This will need to be updates to include subdaily values
-            # when granule support is in
-            wv_layer["startDate"] = start_date.strftime("%Y-%m-%d")
+            wv_layer["startDate"] = start_date.strftime("%Y-%m-%d %H:%M:%S")
             if end_date != datetime.min:
-                wv_layer["endDate"] = end_date.strftime("%Y-%m-%d")
+                wv_layer["endDate"] = end_date.strftime("%Y-%m-%d %H:%M:%S")
             if date_range_start and date_range_end:
                 wv_layer["allDateRanges"] = [{"startDate": s, "endDate": e} for s, e in zip(date_range_start, date_range_end)]
     except ValueError:
