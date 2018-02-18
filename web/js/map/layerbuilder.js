@@ -103,11 +103,11 @@ export function mapLayerBuilder(models, config, cache, Parent) {
     var projId = models.proj.selected.id;
     var date;
     if (options.date) {
-      date = util.toISOStringDate(options.date);
+      date = (options.date).toISOString().split('.')[0] + 'Z';
     } else {
-      date = util.toISOStringDate(models.date.selected);
+      date = (models.date.selected).toISOString().split('.')[0] + 'Z';
     }
-    var dateId = (def.period === 'daily' || def.period === 'monthly' || def.period === 'yearly') ? date : '';
+    var dateId = (def.period === 'subdaily' || def.period === 'daily' || def.period === 'monthly' || def.period === 'yearly') ? date : '';
     var palette = '';
     if (models.palettes.isActive(def.id)) {
       palette = models.palettes.key(def.id);
