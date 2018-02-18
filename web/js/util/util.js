@@ -184,8 +184,9 @@ export default (function (self) {
     var second = 0;
     var millisecond = 0;
 
-    if (yyyymmdd[3]) {
-      var hhmmss = yyyymmdd[3].split(/[:]+/);
+    // Use default of midnight if time is not specified
+    if (dateTimeArr.length > 1) {
+      var hhmmss = dateTimeArr[1].split(/[:.Z]/);
       hour = hhmmss[0] || 0;
       minute = hhmmss[1] || 0;
       second = hhmmss[2] || 0;
