@@ -565,6 +565,10 @@ export default (function (self) {
     return self.clearTimeUTC(self.now());
   };
 
+  self.thisTime = function () {
+    return self.now();
+  };
+
   /**
    * General error handler.
    *
