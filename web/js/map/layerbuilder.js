@@ -103,9 +103,9 @@ export function mapLayerBuilder(models, config, cache, Parent) {
     var projId = models.proj.selected.id;
     var date;
     if (options.date) {
-      date = (options.date).toISOString().split('.')[0] + 'Z';
+      date = util.toISOStringSeconds(options.date);
     } else {
-      date = (models.date.selected).toISOString().split('.')[0] + 'Z';
+      date = util.toISOStringSeconds(models.date.selected);
     }
     var dateId = (def.period === 'subdaily' || def.period === 'daily' || def.period === 'monthly' || def.period === 'yearly') ? date : '';
     var palette = '';
@@ -166,7 +166,7 @@ export function mapLayerBuilder(models, config, cache, Parent) {
     if (day) {
       date = util.dateAdd(date, 'day', day);
     }
-    extra = '?TIME=' + date.toISOString().split('.')[0] + 'Z';
+    extra = '?TIME=' + util.toISOStringSeconds(util.roundTimeOneMinute(date));
 
     var sourceOptions = {
       url: source.url + extra,
@@ -246,7 +246,7 @@ export function mapLayerBuilder(models, config, cache, Parent) {
     if (day) {
       date = util.dateAdd(date, 'day', day);
     }
-    extra = '?TIME=' + date.toISOString().split('.')[0] + 'Z';
+    extra = '?TIME=' + util.toISOStringSeconds(util.roundTimeOneMinute(date));
 
     var sourceOptions = {
       url: source.url + extra,
