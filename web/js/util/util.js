@@ -243,6 +243,7 @@ export default (function (self) {
     var parts = time.split('.')[0].split(':');
     return parts[0] + ':' + parts[1];
   };
+
   /**
    * Calculates percent of date between two other dates
    *
@@ -256,6 +257,16 @@ export default (function (self) {
   self.getDatePercent = function (current, start, end) {
     return Math.round((current - start) / (end - start));
   };
+
+  self.roundTimeTenMinute = function (time) {
+    var timeToReturn = new Date(time);
+
+    timeToReturn.setMilliseconds(Math.round(timeToReturn.getMilliseconds() / 1000) * 1000);
+    timeToReturn.setSeconds(Math.round(timeToReturn.getSeconds() / 60) * 60);
+    timeToReturn.setMinutes(Math.round(timeToReturn.getMinutes() / 10) * 10);
+    return timeToReturn;
+  };
+
   /**
    * Sets a date to UTC midnight.
    *
@@ -280,6 +291,9 @@ export default (function (self) {
       case 'minute':
         newDate.setUTCMinutes(newDate.getUTCMinutes() + amount);
         break;
+      case 'hour':
+        newDate.setUTCHours(newDate.getUTCHours() + amount);
+        break;
       case 'day':
         newDate.setUTCDate(newDate.getUTCDate() + amount);
         break;
@@ -303,16 +317,16 @@ export default (function (self) {
   };
 
   self.daysInMonth = function (d) {
-    var y;
-    var m;
+    var year;
+    var month;
     if (d.getUTCFullYear) {
-      y = d.getUTCFullYear();
-      m = d.getUTCMonth();
+      year = d.getUTCFullYear();
+      month = d.getUTCMonth();
     } else {
-      y = d.year;
-      m = d.month;
+      year = d.year;
+      month = d.month;
     }
-    var lastDay = new Date(Date.UTC(y, m + 1, 0));
+    var lastDay = new Date(Date.UTC(year, month + 1, 0));
     return lastDay.getUTCDate();
   };
 
@@ -406,37 +420,37 @@ export default (function (self) {
   };
 
   self.rollRange = function (date, interval, minDate, maxDate) {
-    var y = date.getUTCFullYear();
-    var m = date.getUTCMonth();
+    var year = date.getUTCFullYear();
+    var month = date.getUTCMonth();
     var first, last;
     switch (interval) {
       case 'minute':
-        var firstMinute = new Date(Date.UTC(y, m, 1, 0, 0));
-        var lastMinute = new Date(Date.UTC(y, m, self.daysInMonth(date), 23, 59));
+        var firstMinute = new Date(Date.UTC(year, month, 1, 0, 0));
+        var lastMinute = new Date(Date.UTC(year, month, self.daysInMonth(date), 23, 59));
         first = new Date(Math.max(firstMinute, minDate))
           .getUTCMinutes();
         last = new Date(Math.min(lastMinute, maxDate))
           .getUTCMinutes();
         break;
       case 'hour':
-        var firstHour = new Date(Date.UTC(y, m, 1, 0));
-        var lastHour = new Date(Date.UTC(y, m, self.daysInMonth(date), 23));
+        var firstHour = new Date(Date.UTC(year, month, 1, 0));
+        var lastHour = new Date(Date.UTC(year, month, self.daysInMonth(date), 23));
         first = new Date(Math.max(firstHour, minDate))
           .getUTCHours();
         last = new Date(Math.min(lastHour, maxDate))
           .getUTCHours();
         break;
       case 'day':
-        var firstDay = new Date(Date.UTC(y, m, 1));
-        var lastDay = new Date(Date.UTC(y, m, self.daysInMonth(date)));
+        var firstDay = new Date(Date.UTC(year, month, 1));
+        var lastDay = new Date(Date.UTC(year, month, self.daysInMonth(date)));
         first = new Date(Math.max(firstDay, minDate))
           .getUTCDate();
         last = new Date(Math.min(lastDay, maxDate))
           .getUTCDate();
         break;
       case 'month':
-        var firstMonth = new Date(Date.UTC(y, 0, 1));
-        var lastMonth = new Date(Date.UTC(y, 11, 31));
+        var firstMonth = new Date(Date.UTC(year, 0, 1));
+        var lastMonth = new Date(Date.UTC(year, 11, 31));
         first = new Date(Math.max(firstMonth, minDate))
           .getUTCMonth();
         last = new Date(Math.min(lastMonth, maxDate))
@@ -511,7 +525,7 @@ export default (function (self) {
    */
   self.toCompactTimestamp = function (date) {
     return date.toISOString()
-      .replace(/[-:TZ\.]/g, '');
+      .replace(/[-:TZ.]/g, '');
   };
 
   /**
@@ -609,13 +623,15 @@ export default (function (self) {
       parseInt(str.substring(4, 6), 16) + ',' +
       parseInt(str.substring(6, 8), 16) + ')';
   };
+
   self.rgbaToHex = function (r, g, b) {
     function hex (c) {
       var strHex = c.toString(16);
-      return strHex.length == 1 ? '0' + strHex : strHex;
+      return strHex.length === 1 ? '0' + strHex : strHex;
     }
     return hex(r) + hex(g) + hex(b) + 'ff';
   };
+
   self.hexColorDelta = function (hex1, hex2) {
     var r1 = parseInt(hex1.substring(0, 2), 16);
     var g1 = parseInt(hex1.substring(2, 4), 16);
@@ -626,6 +642,7 @@ export default (function (self) {
     // calculate differences in 3D Space
     return Math.sqrt(Math.pow((r1 - r2), 2) + Math.pow((g1 - g2), 2) + Math.pow((b1 - b2), 2));
   };
+
   /**
    * Submits an AJAX request or retreives the result from the cache.
    *
@@ -692,6 +709,7 @@ export default (function (self) {
       }
     };
   };
+
   /**
    * Http request using promises
    * http://www.html5rocks.com/en/tutorials/es6/promises/#toc-promisifying-xmlhttprequest
@@ -710,7 +728,7 @@ export default (function (self) {
       req.onload = function () {
         // This is called even on 404 etc
         // so check the status
-        if (req.status == 200) {
+        if (req.status === 200) {
           // Resolve the promise with the response text
           resolve(req.response);
         } else {
@@ -727,6 +745,7 @@ export default (function (self) {
       req.send();
     });
   };
+
   // FIXME: Should be replaced with $.when
   self.ajaxJoin = function (calls) {
     var completed = 0;
@@ -737,7 +756,7 @@ export default (function (self) {
       call.promise.done(function (data) {
         result[call.item] = data;
         completed += 1;
-        if (completed == calls.length) {
+        if (completed === calls.length) {
           deferred.resolve(result);
         }
       })
@@ -825,6 +844,7 @@ export default (function (self) {
     }
     return formatted;
   };
+
   self.toArray = function (value) {
     if (!value) {
       return [];
